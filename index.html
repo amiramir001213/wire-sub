@@ -1,443 +1,399 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WireGuard Config Generator Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>WireGuard Config Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --primary-dark: #2980b9;
-            --secondary-color: #2ecc71;
-            --accent-color: #e74c3c;
-            --background-dark: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text-light: #ecf0f1;
-            --border-radius: 12px;
-            --gradient-start: #1a2980;
-            --gradient-end: #26d0ce;
-            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --primary: #6200ea;
+            --primary-light: #9d46ff;
+            --primary-dark: #0a00b6;
+            --secondary: #03dac6;
+            --secondary-dark: #018786;
+            --background: #ffffff;
+            --surface: #f5f5f5;
+            --error: #b00020;
+            --text-primary: #121212;
+            --text-secondary: #757575;
+            --border-radius: 8px;
+            --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #bb86fc;
+            --primary-light: #e2b9ff;
+            --primary-dark: #8858c8;
+            --secondary: #03dac6;
+            --secondary-dark: #018786;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --error: #cf6679;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Vazirmatn', sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
 
         body {
-            background: var(--background-dark);
-            color: var(--text-light);
+            background-color: var(--background);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-            background-attachment: fixed;
+            transition: var(--transition);
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 30px;
-            background: rgba(45, 45, 45, 0.9);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
+            padding: 2rem;
         }
 
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(rgba(255, 255, 255, 0.05), transparent 60%);
-            z-index: -1;
-            pointer-events: none;
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .theme-switch-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .theme-switch-btn:hover {
+            transform: scale(1.1);
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 30px 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: var(--border-radius);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--box-shadow);
-        }
-
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            margin-bottom: 2rem;
         }
 
         .header h1 {
-            font-size: 2.8rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 700;
         }
 
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 5px rgba(52, 152, 219, 0.5), 0 0 10px rgba(52, 152, 219, 0.3);
-            }
-
-            to {
-                text-shadow: 0 0 10px rgba(52, 152, 219, 0.7), 0 0 20px rgba(52, 152, 219, 0.5);
-            }
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-        }
-
-        .form-container {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .config-preview {
-            flex: 1;
-            min-width: 300px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
+        .card {
+            background: var(--surface);
             border-radius: var(--border-radius);
-            display: none;
-            box-shadow: var(--box-shadow);
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
         }
 
-        .preview-title {
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 1rem;
         }
 
-        .connection-status {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            background-color: var(--secondary-color);
+        .card-header h2 {
+            font-size: 1.3rem;
+            margin-left: 0.5rem;
+            color: var(--primary);
+        }
+
+        .card-header i {
+            color: var(--primary);
+            font-size: 1.3rem;
+            background: rgba(98, 0, 234, 0.1);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
-            }
-        }
-
-        .preview-content {
-            position: relative;
-            min-height: 300px;
-            overflow: hidden;
-        }
-
-        .network-visualization {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
+            box-shadow: 0 0 10px rgba(98, 0, 234, 0.2);
         }
 
         .form-grid {
-            flex: 2;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
         }
 
         .form-group {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .form-group:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-3px);
-            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
-        }
-
-        .form-group::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), transparent);
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .form-group:hover::after {
-            opacity: 1;
-        }
-
-        select#location {
-            background-color: rgba(52, 152, 219, 0.1);
-            font-size: 1.1em;
-            padding: 15px;
-            border: 2px solid var(--primary-color);
-            background-image: linear-gradient(45deg, transparent 50%, var(--primary-color) 50%),
-                linear-gradient(135deg, var(--primary-color) 50%, transparent 50%);
-            background-position: calc(100% - 20px) calc(1em + 2px),
-                calc(100% - 15px) calc(1em + 2px);
-            background-size: 5px 5px,
-                5px 5px;
-            background-repeat: no-repeat;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-        }
-
-        select#location option {
-            background-color: var(--card-bg);
-            color: var(--text-light);
-            padding: 10px;
+            margin-bottom: 1rem;
         }
 
         label {
             display: block;
-            margin-bottom: 12px;
-            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            font-size: 1.05rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: var(--text-secondary);
         }
 
-        label i {
-            width: 20px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        select,
-        input {
+        input,
+        select {
             width: 100%;
-            padding: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-light);
-            font-size: 16px;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
             transition: var(--transition);
         }
 
-        select:focus,
-        input:focus {
-            border-color: var(--primary-color);
+        [data-theme="dark"] input,
+        [data-theme="dark"] select {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        input:focus,
+        select:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.2);
+        }
+
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236200ea'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            width: 100%;
+        }
+
+        .input-group input {
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            flex: 1;
+        }
+
+        .input-group button {
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 0 1rem;
         }
 
         .btn {
-            padding: 16px 25px;
+            background: var(--primary);
+            color: white;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 16px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-            z-index: -1;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--secondary-color), #27ae60);
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--accent-color), #c0392b);
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            gap: 0.5rem;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.25);
-            filter: brightness(1.05);
+            background: var(--primary-light);
+            transform: translateY(-1px);
         }
 
         .btn:active {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+        }
+
+        .btn i {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: scale(1.2);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+        }
+
+        .btn-error {
+            background: var(--error);
+        }
+
+        .btn-error:hover {
+            background: #d32f2f;
         }
 
         .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .preview-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-            margin-bottom: 30px;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
 
-        .config-output,
-        .key-output {
-            margin-top: 30px;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            box-shadow: var(--box-shadow);
-        }
-
-        .output-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .output-header h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--primary-color);
-        }
-
-        .output-content {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.2);
-        }
-
-        .output-content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .output-content::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .output-content::-webkit-scrollbar-thumb {
-            background-color: var(--primary-color);
-            border-radius: 10px;
-        }
-
-        pre {
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            color: #e0e0e1;
-            line-height: 1.5;
-        }
-
-        /* Mobile responsiveness */
         @media (max-width: 768px) {
-            .form-container {
-                flex-direction: column;
-            }
-
-            .config-preview {
-                order: -1;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .btn-group {
+            .preview-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Toast notification */
+        .preview-box {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            height: 100%;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .preview-box-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-box-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-box-title i {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(98, 0, 234, 0.3);
+        }
+
+        .preview-box-content {
+            flex: 1;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            background: var(--background);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .preview-box-content {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-info {
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .preview-info-label {
+            font-weight: 500;
+            min-width: 120px;
+            color: var(--text-secondary);
+        }
+
+        .preview-info-value {
+            color: var(--primary);
+            flex: 1;
+        }
+
+        .loader {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: loader-spin 1s infinite linear;
+            display: none;
+        }
+
+        [data-theme="dark"] .loader {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+        }
+
+        @keyframes loader-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(46, 204, 113, 0.9);
+            background: #4caf50;
             color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             transform: translateY(100px);
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 1000;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5rem;
         }
 
         .toast.show {
@@ -446,268 +402,329 @@
         }
 
         .toast.error {
-            background: rgba(231, 76, 60, 0.9);
+            background: var(--error);
         }
 
-        /* Feature badges */
-        .feature-badges {
+        .config-visual {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            align-items: center;
             justify-content: center;
         }
 
-        .feature-badge {
-            background: rgba(52, 152, 219, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(52, 152, 219, 0.3);
+        .config-visual::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(rgba(255, 255, 255, 0.1) 8%, transparent 8%);
+            background-position: 0 0;
+            background-size: 30px 30px;
+            opacity: 0.3;
+            animation: move-background 8s linear infinite;
         }
 
-        .loader {
-            display: none;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
+        @keyframes move-background {
+            0% {
+                transform: translate(-10%, -10%);
+            }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+            100% {
+                transform: translate(10%, 10%);
             }
         }
 
-        .tab-container {
-            margin-bottom: 30px;
-        }
-
-        .tabs {
+        .config-visual-icon {
+            font-size: 4rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            animation: pulse 3s infinite;
+            position: relative;
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
+            justify-content: center;
+            align-items: center;
         }
 
-        .tab {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px 8px 0 0;
+        .config-visual-icon::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: -1;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .connection-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #4caf50;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .theme-switch {
+                top: 10px;
+                right: 10px;
+            }
+
+            .theme-switch-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* دکمه پایه */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
-            border-bottom: 2px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
         }
 
-        .tab:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .tab.active {
-            background: rgba(52, 152, 219, 0.2);
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
+        /* حالت ریسپانسیو برای صفحات کوچکتر */
+        @media (max-width: 768px) {
+            .btn {
+                width: 50%;
+                font-size: 0.95rem;
+                padding: 0.65rem 1.2rem;
             }
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        @media (max-width: 480px) {
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="theme-switch">
+        <button class="theme-switch-btn" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-shield-alt"></i> WireGuard Config Generator Pro</h1>
-            <div class="subtitle">ساخت کانفیگ امن و بهینه برای سرورهای مختلف</div>
-
-            <div class="feature-badges">
-                <div class="feature-badge"><i class="fas fa-lock"></i> رمزنگاری پیشرفته</div>
-                <div class="feature-badge"><i class="fas fa-tachometer-alt"></i> عملکرد سریع</div>
-                <div class="feature-badge"><i class="fas fa-globe"></i> پشتیبانی از چندین لوکیشن</div>
-                <div class="feature-badge"><i class="fas fa-shield-alt"></i> امنیت بالا</div>
-                <div class="feature-badge"><i class="fas fa-server"></i> DNS‌های قابل سفارشی‌سازی</div>
-            </div>
+            <h1><i class="fas fa-shield-alt"
+                    style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 8px; border-radius: 10px; margin-right: 10px; box-shadow: 0 2px 10px rgba(98, 0, 234, 0.3);"></i>WireGuard
+                Config Generator</h1>
+            <div class="subtitle">Create optimized configurations for your VPN needs</div>
         </div>
 
-        <div class="form-container">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-cog fa-lg"></i>
+                <h2>Configuration Settings</h2>
+            </div>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="location">
-                        <i class="fas fa-globe-europe"></i>
-                        انتخاب لوکیشن:
-                    </label>
+                    <label for="location">Server Location</label>
                     <select id="location">
                         <option value="Germany">Germany</option>
                         <option value="Netherlands">Netherlands</option>
-                        <option value="France">France</option>
                         <option value="Turkey">Turkey</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="configName">
-                        <i class="fas fa-tag"></i>
-                        نام کانفیگ:
-                    </label>
-                    <div class="input-group" style="display: flex;">
-                        <input type="text" id="configName" placeholder="مثال: VPN-1"
-                            style="border-radius: 10px 0 0 10px; flex: 1;">
-                        <button id="generateRandomNameBtn" class="btn btn-primary"
-                            style="margin: 0; border-radius: 0 10px 10px 0; padding: 10px 15px;">
+                    <label for="configName">Configuration Name</label>
+                    <div class="input-group">
+                        <input type="text" id="configName" placeholder="e.g., VPN-1">
+                        <button id="generateRandomNameBtn" class="btn" type="button" aria-label="Generate Random Name">
                             <i class="fas fa-random"></i>
                         </button>
-                    </div>
+                    </div>ّ
                 </div>
                 <div class="form-group">
-                    <label for="port">
-                        <i class="fas fa-plug"></i>
-                        پورت:
-                    </label>
-                    <input type="number" id="port" placeholder="51820" min="1" max="65535">
+                    <label for="port">Port</label>
+                    <input type="number" id="port" placeholder="51820" min="1" max="65535" value="51820">
                 </div>
                 <div class="form-group">
-                    <label for="ipv4Count">
-                        <i class="fas fa-network-wired"></i>
-                        تعداد آدرس‌های IPv4:
-                    </label>
-                    <input type="number" id="ipv4Count" placeholder="1" min="0" max="10">
+                    <label for="ipv4Count">IPv4 Addresses</label>
+                    <input type="number" id="ipv4Count" placeholder="1" min="0" max="10" value="1">
                 </div>
                 <div class="form-group">
-                    <label for="ipv6Count">
-                        <i class="fas fa-network-wired"></i>
-                        تعداد آدرس‌های IPv6:
-                    </label>
-                    <input type="number" id="ipv6Count" placeholder="0" min="0" max="10">
+                    <label for="ipv6Count">IPv6 Addresses</label>
+                    <input type="number" id="ipv6Count" placeholder="0" min="0" max="10" value="0">
                 </div>
                 <div class="form-group">
-                    <label for="userCount">
-                        <i class="fas fa-users"></i>
-                        تعداد کاربر:
-                    </label>
+                    <label for="userCount">Users</label>
                     <input type="number" id="userCount" placeholder="1" min="1" max="10" value="1">
                 </div>
                 <div class="form-group">
-                    <label for="mtu">
-                        <i class="fas fa-cogs"></i>
-                        MTU:
-                    </label>
-                    <input type="number" id="mtu" placeholder="1420" min="1280" max="1500">
+                    <label for="mtu">MTU</label>
+                    <input type="number" id="mtu" placeholder="1420" min="1280" max="1500" value="1420">
                 </div>
                 <div class="form-group">
-                    <label for="allowedIPs">
-                        <i class="fas fa-network-wired"></i>
-                        AllowedIPs:
-                    </label>
-                    <input type="text" id="allowedIPs" placeholder="0.0.0.0/0">
+                    <label for="allowedIPs">Allowed IPs</label>
+                    <input type="text" id="allowedIPs" placeholder="0.0.0.0/0" value="0.0.0.0/0">
                 </div>
                 <div class="form-group">
-                    <label for="dnsIpv4Count">
-                        <i class="fas fa-server"></i>
-                        تعداد DNS های IPv4:
-                    </label>
+                    <label for="dnsIpv4Count">IPv4 DNS Count</label>
                     <input type="number" id="dnsIpv4Count" placeholder="2" min="2" max="10" value="2">
                 </div>
                 <div class="form-group">
-                    <label for="dnsIpv6Count">
-                        <i class="fas fa-server"></i>
-                        تعداد DNS های IPv6:
-                    </label>
+                    <label for="dnsIpv6Count">IPv6 DNS Count</label>
                     <input type="number" id="dnsIpv6Count" placeholder="0" min="0" max="5" value="0">
                 </div>
                 <div class="form-group">
-                    <label for="primaryDNS">
-                        <i class="fas fa-server"></i>
-                        DNS:
-                    </label>
+                    <label for="primaryDNS">Primary DNS</label>
                     <input type="text" id="primaryDNS" placeholder="78.157.42.100" value="78.157.42.100">
                 </div>
-
             </div>
+        </div>
 
-            <div class="config-preview" id="configPreview">
-                <div class="preview-title">
-                    <span class="connection-status"></span>
-                    <h3>پیش‌نمایش ارتباط</h3>
+        <div class="config-visual">
+            <i class="fas fa-lock config-visual-icon"></i>
+        </div>
+
+        <div class="card" id="configPreview" style="display: none;">
+            <div class="card-header">
+                <i class="fas fa-eye fa-lg"></i>
+                <h2>Configuration Preview</h2>
+            </div>
+            <div>
+                <div class="preview-info">
+                    <span class="preview-info-label">Configuration:</span>
+                    <span class="preview-info-value" id="previewConfigName"></span>
                 </div>
-                <div class="preview-content">
-                    <canvas id="networkVisualization" class="network-visualization"></canvas>
-                    <div id="previewConfigName"></div>
-                    <div id="previewEndpoint"></div>
-                    <div id="previewIPv4"></div>
-                    <div id="previewDNS"></div>
+                <div class="preview-info">
+                    <span class="preview-info-label">Server:</span>
+                    <span class="preview-info-value" id="previewEndpoint"></span>
+                </div>
+                <div class="preview-info">
+                    <span class="preview-info-label">IPv4 Address:</span>
+                    <span class="preview-info-value" id="previewIPv4"></span>
+                </div>
+                <div class="preview-info">
+                    <span class="preview-info-label">DNS:</span>
+                    <span class="preview-info-value" id="previewDNS"></span>
                 </div>
             </div>
         </div>
 
         <div class="btn-group">
-            <button id="generateKeysBtn" class="btn btn-primary">
+            <button id="generateKeysBtn" class="btn">
                 <i class="fas fa-key"></i>
-                تولید کلید ها
+                Generate Keys
             </button>
-            <button id="generateBtn" class="btn btn-success">
+            <button id="generateBtn" class="btn btn-secondary">
                 <i class="fas fa-magic"></i>
-                تولید کانفیگ
+                Generate Configuration
+            </button>
+            <button id="resetBtn" class="btn btn-error">
+                <i class="fas fa-redo-alt"></i>
+                Reset
             </button>
         </div>
 
-        <div class="key-output" id="keyOutput">
-            <div class="output-header">
-                <h3><i class="fas fa-key"></i> کلیدهای تولید شده</h3>
-                <div class="loader" id="keyLoader"></div>
+        <div class="preview-container">
+            <div class="preview-box">
+                <div class="preview-box-header">
+                    <div class="preview-box-title">
+                        <i class="fas fa-key"></i>
+                        Generated Keys
+                    </div>
+                    <div class="loader" id="keyLoader"></div>
+                </div>
+                <div class="preview-box-content" id="keyOutput">
+                    Keys will appear here after generation...
+                </div>
             </div>
-            <div class="output-content">
-                <pre>کلیدهای تولید شده در اینجا نمایش داده می‌شوند...</pre>
-            </div>
-        </div>
 
-        <div class="config-output" id="configOutput">
-            <div class="output-header">
-                <h3><i class="fas fa-file-code"></i> کانفیگ تولید شده</h3>
-                <div class="loader" id="configLoader"></div>
-            </div>
-            <div class="output-content">
-                <pre></pre>
+            <div class="preview-box">
+                <div class="preview-box-header">
+                    <div class="preview-box-title">
+                        <i class="fas fa-file-code"></i>
+                        Generated Configuration
+                    </div>
+                    <div class="loader" id="configLoader"></div>
+                </div>
+                <div class="preview-box-content" id="configOutput"></div>
             </div>
         </div>
 
         <div class="btn-group">
-            <button id="copyBtn" class="btn btn-primary">
+            <button id="copyBtn" class="btn">
                 <i class="fas fa-copy"></i>
-                کپی کانفیگ
+                Copy Configuration
             </button>
-            <button id="downloadBtn" class="btn btn-success">
+            <button id="downloadBtn" class="btn btn-secondary">
                 <i class="fas fa-download"></i>
-                دانلود کانفیگ
-            </button>
-            <button id="resetBtn" class="btn btn-danger">
-                <i class="fas fa-redo-alt"></i>
-                شروع مجدد
+                Download Configuration
             </button>
         </div>
     </div>
@@ -719,6 +736,35 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
     <script>
+        // Theme switcher
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            setTheme(true);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            setTheme(!isDark);
+        });
+
         let clientKeys = null;
 
         // Show toast notification
@@ -739,91 +785,154 @@
             }, 3000);
         }
 
-        function generateRandomCIDR(location) {
-            const ranges = {
-                'Turkey': [
-                    '88.224.0.0/11',
-                    '78.160.0.0/11',
-                    '85.96.0.0/12',
-                    '95.0.0.0/12',
-                    '81.212.0.0/14',
-                    '195.174.0.0/15',
-                    '212.174.0.0/15',
-                    '212.156.0.0/16',
-                    '62.248.0.0/17',
-                    '194.54.32.0/19',
-                    '176.52.176.0/22',
-                    '176.52.176.0/23',
-                    '176.52.178.0/23',
-                    '88.255.214.0/24',
-                    '212.175.198.0/24'
-                ],
-                'Germany': [
-                    '185.216.0.0/16',
-                    '77.235.0.0/16',
-                    '91.205.0.0/16',
-                    '195.201.0.0/16',
-                    '116.203.0.0/16'
-                ],
-                'Netherlands': [
-                    '185.162.0.0/16',
-                    '89.149.0.0/16',
-                    '178.162.0.0/16',
-                    '91.195.0.0/16',
-                    '185.107.0.0/16'
-                ],
-                'France': [
-                    '185.17.0.0/16',
-                    '91.121.0.0/16',
-                    '213.186.0.0/16',
-                    '178.32.0.0/16',
-                    '151.127.0.0/16'
-                ]
-            };
+        // Global location ranges object
+        const locationRanges = {
+            'Turkey': [
+                '88.224.0.0/11',
+                '78.160.0.0/11',
+                '85.96.0.0/12',
+                '95.0.0.0/12',
+                '81.212.0.0/14',
+                '195.174.0.0/15',
+                '212.174.0.0/15',
+                '212.156.0.0/16',
+                '62.248.0.0/17',
+                '194.54.32.0/19',
+                '176.52.176.0/22',
+                '176.52.176.0/23',
+                '176.52.178.0/23',
+                '88.255.214.0/24',
+                '212.175.198.0/24'
+            ],
+            'Germany': [
+                '141.113.0.0/21',
+                '141.113.112.0/21',
+                '141.113.200.0/22',
+                '141.113.204.0/22',
+                '141.113.208.0/21',
+                '141.113.216.0/21',
+                '141.113.224.0/21',
+                '141.113.232.0/21',
+                '141.113.240.0/21',
+                '141.113.248.0/21',
+                '141.113.32.0/21',
+                '141.113.56.0/21',
+                '141.113.72.0/21',
+                '141.113.8.0/21',
+                '141.113.96.0/21',
+                '53.0.0.0/8'
+            ],
+            'Netherlands': [
+                '129.125.0.0/16',
+                '130.112.0.0/16',
+                '130.37.0.0/16',
+                '131.174.0.0/16',
+                '131.211.0.0/16',
+                '131.224.0.0/16',
+                '132.229.0.0/16',
+                '134.221.0.0/16',
+                '136.231.0.0/16',
+                '137.120.0.0/16',
+                '137.224.0.0/16',
+                '137.56.0.0/16',
+                '139.63.0.0/16',
+                '141.252.0.0/16',
+                '143.121.0.0/16',
+                '145.0.0.0/16',
+                '145.100.0.0/15',
+                '145.1.0.0/17',
+                '145.102.0.0/16',
+                '145.103.0.0/16',
+                '145.107.0.0/16',
+                '145.108.0.0/16',
+                '145.117.0.0/16',
+                '145.118.0.0/16',
+                '145.120.0.0/14',
+                '145.124.0.0/15',
+                '145.126.0.0/16',
+                '145.127.0.0/17',
+                '145.136.0.0/15',
+                '145.138.0.0/16',
+                '145.140.0.0/14',
+                '145.144.0.0/12',
+                '145.160.0.0/12',
+                '145.19.0.0/16',
+                '145.20.0.0/16',
+                '145.2.0.0/15',
+                '145.23.0.0/16',
+                '145.24.0.0/16',
+                '145.28.0.0/15',
+                '145.33.0.0/16',
+                '145.37.0.0/16',
+                '145.38.0.0/15',
+                '145.44.0.0/16',
+                '145.48.0.0/15',
+                '145.5.0.0/16',
+                '145.51.0.0/16',
+                '145.52.0.0/16',
+                '145.74.0.0/15',
+                '145.76.0.0/16',
+                '145.81.0.0/16',
+                '145.85.0.0/16',
+                '145.88.0.0/15',
+                '145.90.0.0/16',
+                '145.9.0.0/16',
+                '145.91.0.0/16',
+                '145.92.0.0/15',
+                '145.95.0.0/16',
+                '145.96.0.0/16'
+            ],
+        };
 
-            // Generate a random IP address from a CIDR range
-            function generateIPFromCIDR(cidr) {
+        // Function to generate random IP from CIDR
+        function generateIPFromCIDR(cidr) {
+            try {
+                // Parse CIDR to base IP and mask
                 const [baseIP, maskBits] = cidr.split('/');
                 const ipParts = baseIP.split('.').map(Number);
                 const mask = parseInt(maskBits);
 
-                // Calculate which octets we can randomize based on the mask
-                let fullOctetsMasked = Math.floor(mask / 8);
-                let partialOctetBits = mask % 8;
+                // Determine complete octets and partial bits in mask
+                const fullOctetsMasked = Math.floor(mask / 8);
+                const partialOctetBits = mask % 8;
 
-                // Keep the fully masked octets as they are
+                // Create random IP address while preserving network segments
                 for (let i = fullOctetsMasked; i < 4; i++) {
                     if (i === fullOctetsMasked && partialOctetBits > 0) {
-                        // Handle the partially masked octet
-                        let baseValue = ipParts[i];
-                        let hostBits = 8 - partialOctetBits;
-                        let maskValue = 256 - Math.pow(2, hostBits);
-                        let maxRandomValue = Math.pow(2, hostBits) - 1;
+                        // Partial masked section
+                        const baseValue = ipParts[i];
+                        const hostBits = 8 - partialOctetBits;
+                        const maskValue = 256 - Math.pow(2, hostBits);
+                        const maxRandomValue = Math.pow(2, hostBits) - 1;
 
-                        // Keep the network portion and randomize the host portion
+                        // Preserve network part and randomize host part
                         ipParts[i] = (baseValue & maskValue) + Math.floor(Math.random() * maxRandomValue) + 1;
                     } else {
-                        // Fully randomize this octet
+                        // Completely randomize this octet
                         ipParts[i] = Math.floor(Math.random() * 254) + 1; // Avoid .0 and .255
                     }
                 }
 
                 return ipParts.join('.');
+            } catch (error) {
+                console.error('Error generating IP from CIDR:', error);
+                return '1.1.1.1'; // Default value in case of error
             }
+        }
 
-            const locationRanges = ranges[location] || [];
-            if (locationRanges.length > 0) {
-                // Select a random CIDR range from the location
-                const selectedCIDR = locationRanges[Math.floor(Math.random() * locationRanges.length)];
-                // Generate a random IP from that CIDR
+        function generateRandomCIDR(location) {
+            // Get ranges for the location from the global object
+            const rangesForLocation = locationRanges[location] || [];
+            if (rangesForLocation.length > 0) {
+                // Choose a random CIDR range from the location
+                const selectedCIDR = rangesForLocation[Math.floor(Math.random() * rangesForLocation.length)];
                 return generateIPFromCIDR(selectedCIDR);
             }
-
-            // Fallback random IP if no ranges defined
+            // Default random IP if no range exists
             const firstOctet = Math.floor(Math.random() * 223) + 1;
             const secondOctet = Math.floor(Math.random() * 255);
             const thirdOctet = Math.floor(Math.random() * 255);
-            const fourthOctet = Math.floor(Math.random() * 254) + 1; // Avoid .0
+            const fourthOctet = Math.floor(Math.random() * 254) + 1;
             return `${firstOctet}.${secondOctet}.${thirdOctet}.${fourthOctet}`;
         }
 
@@ -841,16 +950,11 @@
                 const privateKey = uint8ArrayToBase64(keyPair.secretKey);
                 const publicKey = uint8ArrayToBase64(keyPair.publicKey);
                 clientKeys = { privateKey, publicKey };
-                document.getElementById('keyOutput').querySelector('pre').textContent =
-                    `کلید خصوصی: ${privateKey}\nکلید عمومی: ${publicKey}`;
+                document.getElementById('keyOutput').textContent =
+                    `Private Key: ${privateKey}\nPublic Key: ${publicKey}`;
 
                 // Show preview
                 document.getElementById('configPreview').style.display = 'block';
-
-                // Update visualPreview
-                const visualPreview = document.getElementById('visualPreview');
-                visualPreview.innerHTML = '<div id="connectionGraph" style="width: 100%; height: 300px;"></div>';
-                drawNetworkGraph();
 
                 // Update preview data
                 updatePreview();
@@ -870,7 +974,7 @@
             setTimeout(() => {
                 if (generateKeysAuto()) {
                     // Show success toast
-                    showToast('کلیدها با موفقیت تولید شدند');
+                    showToast('Keys generated successfully');
                 }
 
                 // Hide loader
@@ -891,13 +995,6 @@
                 block2 += chars[Math.floor(Math.random() * chars.length)];
             }
             return `${block1}:${block2}::${block3}/128`;
-        }
-
-        function generateIPv4FromCIDR(cidr, index) {
-            const [baseIP] = cidr.split('/');
-            const parts = baseIP.split('.');
-            parts[3] = parseInt(parts[3]) + index + 1;
-            return parts.join('.') + '/24';
         }
 
         function generateDNS() {
@@ -930,235 +1027,144 @@
             const endpoint = endpointIP + ':' + port;
             const ipv4Count = parseInt(document.getElementById('ipv4Count').value) || 1;
 
-            // Simple client IP preview
+            // Generate IPv4 preview addresses using locationRanges
             let ipv4Addresses = [];
-            for (let i = 0; i < ipv4Count && i < 3; i++) {
-                ipv4Addresses.push(`10.0.0.${i + 1}/32`);
+            if (ipv4Count > 0) {
+                if (locationRanges[location] && locationRanges[location].length > 0) {
+                    for (let i = 0; i < ipv4Count && i < locationRanges[location].length; i++) {
+                        ipv4Addresses.push(locationRanges[location][i]);
+                    }
+                    if (ipv4Count > locationRanges[location].length) {
+                        ipv4Addresses.push("...");
+                    }
+                } else {
+                    for (let i = 0; i < ipv4Count; i++) {
+                        ipv4Addresses.push(`10.0.0.${i + 1}/32`);
+                    }
+                }
+            } else {
+                ipv4Addresses.push('No IPv4 address');
             }
-
-            if (ipv4Count > 3) {
-                ipv4Addresses.push("...");
-            }
+            const ipv4AddressPreview = ipv4Addresses.join(', ');
 
             // Show preview
             document.getElementById('configPreview').style.display = 'block';
-            document.getElementById('previewConfigName').innerHTML = `<strong>نام کانفیگ:</strong> <span style="color: var(--secondary-color)">${configName}</span>`;
-            document.getElementById('previewEndpoint').innerHTML = `<strong>سرور:</strong> <span style="color: var(--secondary-color)">${endpoint}</span>`;
-            document.getElementById('previewIPv4').innerHTML = `<strong>آدرس IPv4:</strong> <span style="color: var(--secondary-color)">${ipv4Addresses.join(', ') || 'بدون آدرس IPv4'}</span>`;
-            document.getElementById('previewDNS').innerHTML = `<strong>DNS:</strong> <span style="color: var(--secondary-color)">${generateDNS()}</span>`;
-        }
-
-        function drawNetworkGraph() {
-            const canvas = document.getElementById('networkVisualization');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const width = canvas.parentElement.offsetWidth;
-            const height = canvas.parentElement.offsetHeight;
-            canvas.width = width;
-            canvas.height = height;
-            const centerX = width / 2;
-            const centerY = height / 2;
-            ctx.clearRect(0, 0, width, height);
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(52, 152, 219, 0.7)';
-            ctx.fill();
-            const connectionCount = 10;
-            for (let i = 0; i < connectionCount; i++) {
-                const angle = (i / connectionCount) * Math.PI * 2;
-                const radius = 80 + Math.random() * 40;
-                const x = centerX + Math.cos(angle) * radius;
-                const y = centerY + Math.sin(angle) * radius;
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.lineTo(x, y);
-                ctx.strokeStyle = 'rgba(46, 204, 113, 0.3)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(46, 204, 113, 0.7)';
-                ctx.fill();
-            }
-            if (canvas.animation) {
-                cancelAnimationFrame(canvas.animation);
-            }
-            let frame = 0;
-            function animate() {
-                frame++;
-                const connectionCount = 10;
-                for (let i = 0; i < connectionCount; i++) {
-                    const angle = (i / connectionCount) * Math.PI * 2;
-                    const radius = 80 + Math.random() * 40;
-                    const x = centerX + Math.cos(angle) * radius;
-                    const y = centerY + Math.sin(angle) * radius;
-                    const packetProgress = (frame % 100) / 100;
-                    const packetX = centerX + (x - centerX) * packetProgress;
-                    const packetY = centerY + (y - centerY) * packetProgress;
-                    if (i % 3 === 0) {
-                        ctx.beginPath();
-                        ctx.arc(packetX, packetY, 3, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                        ctx.fill();
-                    }
-                }
-                canvas.animation = requestAnimationFrame(animate);
-            }
-            canvas.animation = requestAnimationFrame(animate);
+            document.getElementById('previewConfigName').textContent = configName;
+            document.getElementById('previewEndpoint').textContent = endpoint;
+            document.getElementById('previewIPv4').textContent = ipv4AddressPreview;
+            document.getElementById('previewDNS').textContent = generateDNS();
         }
 
         function generateConfig() {
             if (!clientKeys) {
                 if (!generateKeysAuto()) {
-                    showToast('خطا در تولید کلیدها.', true);
+                    showToast('Error generating keys.', true);
                     return;
                 }
             }
+
+            // Show loader
             document.getElementById('configLoader').style.display = 'block';
+
             setTimeout(() => {
-                const configName = document.getElementById('configName').value || 'WireGuard';
-                const location = document.getElementById('location').value;
-                const endpointIP = generateRandomCIDR(location); // Generate IP from location range
-                const port = document.getElementById('port').value || "51820";
-                const mtu = document.getElementById('mtu').value || "1420";
-                const userCount = parseInt(document.getElementById('userCount').value) || 1;
-                const ipv4Count = parseInt(document.getElementById('ipv4Count').value) || 1;
-                const ipv6Count = parseInt(document.getElementById('ipv6Count').value) || 0;
-                const customAllowedIPs = document.getElementById('allowedIPs').value || "0.0.0.0/0";
-                const dns = generateDNS();
-                const endpoint = endpointIP + ':' + port;
+                try {
+                    const configName = document.getElementById('configName').value || 'WireGuard';
+                    const location = document.getElementById('location').value;
+                    const endpointIP = generateRandomCIDR(location);
+                    const port = document.getElementById('port').value || "51820";
+                    const mtu = document.getElementById('mtu').value || "1420";
+                    const userCount = parseInt(document.getElementById('userCount').value) || 1;
+                    const ipv4Count = parseInt(document.getElementById('ipv4Count').value) || 1;
+                    const ipv6Count = parseInt(document.getElementById('ipv6Count').value) || 0;
+                    const customAllowedIPs = document.getElementById('allowedIPs').value || "0.0.0.0/0";
+                    const dns = generateDNS();
+                    const endpoint = endpointIP + ':' + port;
 
-                let configs = [];
-                for (let i = 0; i < userCount; i++) {
-                    let ipv4Addresses = [];
+                    // Array to hold configurations
+                    let configs = [];
 
-                    // Generate random IPs for client addresses
-                    for (let j = 0; j < ipv4Count; j++) {
-                        // Generate IP in 10.0.0.0/24 range for clients
-                        const clientIP = `10.0.0.${1 + i * ipv4Count + j}`;
-                        ipv4Addresses.push(clientIP + "/32");
+                    // Generate config for each user
+                    for (let i = 0; i < userCount; i++) {
+                        // Generate IPv4 addresses for the client
+                        let ipv4Addresses = [];
+                        for (let j = 0; j < ipv4Count; j++) {
+                            let clientIP;
+                            if (locationRanges[location] && locationRanges[location].length > 0) {
+                                clientIP = locationRanges[location][j % locationRanges[location].length];
+                            } else {
+                                clientIP = `10.0.0.${1 + i * ipv4Count + j}/32`;
+                            }
+                            ipv4Addresses.push(clientIP);
+                        }
+
+                        // Generate IPv6 addresses
+                        let ipv6Addresses = [];
+                        for (let j = 0; j < ipv6Count; j++) {
+                            ipv6Addresses.push(generateIPv6Address());
+                        }
+
+                        // Combine addresses
+                        let address = [...ipv4Addresses, ...ipv6Addresses].join(', ');
+
+                        // Create config text
+                        let configText = '';
+                        configText += `# ${configName}-${location}-${i + 1}\n`;
+                        configText += `[Interface]\n`;
+                        configText += `PrivateKey = ${clientKeys.privateKey}\n`;
+                        configText += `Address = ${address}\n`;
+                        configText += `DNS = ${dns}\n`;
+                        configText += `MTU = ${mtu}\n\n`;
+                        configText += `[Peer]\n`;
+                        configText += `PublicKey = ${clientKeys.publicKey}\n`;
+                        configText += `Endpoint = ${endpoint}\n`;
+                        configText += `AllowedIPs = ${customAllowedIPs}`;
+
+                        // Add to configurations array
+                        configs.push(configText);
                     }
 
-                    let ipv6Addresses = [];
-                    for (let j = 0; j < ipv6Count; j++) {
-                        ipv6Addresses.push(generateIPv6Address());
+                    // Combine all configs with a separator
+                    const fullConfigText = configs.join('\n\n# ----------------\n\n');
+
+                    // Display in output
+                    document.getElementById('configLoader').style.display = 'none';
+                    document.getElementById('configOutput').textContent = fullConfigText;
+
+                    // Update preview
+                    document.getElementById('previewConfigName').textContent = configName;
+                    document.getElementById('previewEndpoint').textContent = endpoint;
+
+                    let ipv4AddressPreview;
+                    if (ipv4Count > 0) {
+                        if (locationRanges[location] && locationRanges[location].length > 0) {
+                            ipv4AddressPreview = locationRanges[location][0] + (ipv4Count > 1 ? ', ...' : '');
+                        } else {
+                            ipv4AddressPreview = `10.0.0.1/32${ipv4Count > 1 ? ', ...' : ''}`;
+                        }
+                    } else {
+                        ipv4AddressPreview = 'No IPv4 address';
                     }
+                    document.getElementById('previewIPv4').textContent = ipv4AddressPreview;
+                    document.getElementById('previewDNS').textContent = dns;
 
-                    let address = [...ipv4Addresses, ...ipv6Addresses].join(', ');
+                    // Show preview section
+                    document.getElementById('configPreview').style.display = 'block';
 
-                    // تغییر برای حل مشکل نمایش کانفیگ
-                    let config = `# ${configName}-${location}-${i + 1}
-[Interface]
-PrivateKey = ${clientKeys.privateKey}
-Address = ${address}
-DNS = ${dns}
-MTU = ${mtu}
+                    // Scroll to output
+                    document.querySelector('.preview-container').scrollIntoView({ behavior: 'smooth' });
 
-[Peer]
-PublicKey = ${clientKeys.publicKey}
-Endpoint = ${endpoint}
-AllowedIPs = ${customAllowedIPs}`;
-
-                    configs.push(config);
+                    // Show success message
+                    showToast('Configuration generated successfully');
+                } catch (error) {
+                    console.error('Error generating configuration:', error);
+                    document.getElementById('configLoader').style.display = 'none';
+                    showToast('Error generating configuration. Please try again.', true);
                 }
-
-                // نمایش کانفیگ در خروجی
-                document.getElementById('configLoader').style.display = 'none';
-                const configOutput = document.querySelector('#configOutput pre');
-                configOutput.textContent = configs.join('\n\n# ----------------\n\n');
-
-                // حرکت به محل پیش نمایش
-                document.getElementById('configOutput').scrollIntoView({ behavior: 'smooth' });
-
-                // به روز رسانی پیش نمایش
-                document.getElementById('previewConfigName').innerHTML = `<strong>نام کانفیگ:</strong> <span style="color: var(--secondary-color)">${configName}</span>`;
-                document.getElementById('previewEndpoint').innerHTML = `<strong>سرور:</strong> <span style="color: var(--secondary-color)">${endpoint}</span>`;
-
-                const ipv4AddressPreview = ipv4Count > 0 ?
-                    `10.0.0.${1}/32${ipv4Count > 1 ? ', ...' : ''}` : 'بدون آدرس IPv4';
-                document.getElementById('previewIPv4').innerHTML = `<strong>آدرس IPv4:</strong> <span style="color: var(--secondary-color)">${ipv4AddressPreview}</span>`;
-                document.getElementById('previewDNS').innerHTML = `<strong>DNS:</strong> <span style="color: var(--secondary-color)">${dns}</span>`;
-
-                // Make preview visible if not already
-                document.getElementById('configPreview').style.display = 'block';
-
-                showToast('کانفیگ با موفقیت تولید شد');
             }, 1000);
         }
 
-        window.addEventListener('load', function () {
-            generateKeysAuto();
-            const formFields = document.querySelectorAll('input, select');
-            formFields.forEach(field => {
-                field.addEventListener('change', updatePreview);
-            });
-            document.getElementById('port').value = document.getElementById('port').placeholder || "51820";
-            document.getElementById('mtu').value = document.getElementById('mtu').placeholder || "1420";
-            document.getElementById('ipv4Count').value = document.getElementById('ipv4Count').placeholder || "1";
-            document.getElementById('ipv6Count').value = document.getElementById('ipv6Count').placeholder || "0";
-            document.getElementById('dnsIpv4Count').value = document.getElementById('dnsIpv4Count').placeholder || "1";
-            document.getElementById('dnsIpv6Count').value = document.getElementById('dnsIpv6Count').placeholder || "1";
-            document.getElementById('userCount').value = document.getElementById('userCount').placeholder || "1";
-            document.getElementById('allowedIPs').value = document.getElementById('allowedIPs').placeholder || "0.0.0.0/0";
-            const canvas = document.getElementById('networkVisualization');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                canvas.width = canvas.parentElement.offsetWidth;
-                canvas.height = canvas.parentElement.offsetHeight;
-                ctx.strokeStyle = 'rgba(52, 152, 219, 0.2)';
-                ctx.lineWidth = 1;
-                for (let i = 0; i < canvas.width; i += 20) {
-                    ctx.beginPath();
-                    ctx.moveTo(i, 0);
-                    ctx.lineTo(i, canvas.height);
-                    ctx.stroke();
-                }
-                for (let i = 0; i < canvas.height; i += 20) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, i);
-                    ctx.lineTo(canvas.width, i);
-                    ctx.stroke();
-                }
-            }
-        });
-
-        document.getElementById('generateKeysBtn').addEventListener('click', generateKeys);
-        document.getElementById('generateBtn').addEventListener('click', generateConfig);
-
-        document.getElementById('copyBtn').addEventListener('click', () => {
-            const configText = document.querySelector('#configOutput pre').textContent;
-            if (configText.trim() !== "") {
-                navigator.clipboard.writeText(configText).then(() => {
-                    showToast('کانفیگ با موفقیت کپی شد!');
-                }).catch(() => {
-                    showToast('کپی کانفیگ با خطا مواجه شد.', true);
-                });
-            } else {
-                showToast('لطفاً ابتدا کانفیگ را تولید کنید.', true);
-            }
-        });
-
-        document.getElementById('downloadBtn').addEventListener('click', () => {
-            const configText = document.querySelector('#configOutput pre').textContent;
-            if (configText.trim() !== "") {
-                const blob = new Blob([configText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                const configName = document.getElementById('configName').value || 'wireguard';
-                a.download = `${configName}.conf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('کانفیگ با موفقیت دانلود شد!');
-            } else {
-                showToast('لطفاً ابتدا کانفیگ را تولید کنید.', true);
-            }
-        });
-
         function generateRandomName() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
             const numbers = '0123456789';
             let result = '';
             for (let i = 0; i < 3; i++) {
@@ -1170,35 +1176,76 @@ AllowedIPs = ${customAllowedIPs}`;
             return result;
         }
 
+        window.addEventListener('load', function () {
+            generateKeysAuto();
+            const formFields = document.querySelectorAll('input, select');
+            formFields.forEach(field => {
+                field.addEventListener('change', updatePreview);
+            });
+        });
+
+        document.getElementById('generateKeysBtn').addEventListener('click', generateKeys);
+        document.getElementById('generateBtn').addEventListener('click', generateConfig);
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const configText = document.getElementById('configOutput').textContent;
+            if (configText.trim() !== "") {
+                navigator.clipboard.writeText(configText).then(() => {
+                    showToast('Configuration copied to clipboard!');
+                }).catch(() => {
+                    showToast('Failed to copy configuration.', true);
+                });
+            } else {
+                showToast('Please generate a configuration first.', true);
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const configText = document.getElementById('configOutput').textContent;
+            if (configText.trim() !== "") {
+                const blob = new Blob([configText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const configName = document.getElementById('configName').value || 'wireguard';
+                a.download = `${configName}.conf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Configuration downloaded successfully!');
+            } else {
+                showToast('Please generate a configuration first.', true);
+            }
+        });
+
         document.getElementById('generateRandomNameBtn').addEventListener('click', () => {
             document.getElementById('configName').value = generateRandomName();
             updatePreview();
-            showToast('نام تصادفی ایجاد شد');
+            showToast('Random name generated');
         });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
             document.querySelectorAll('input').forEach(input => {
                 if (input.type === 'number') {
                     input.value = input.placeholder;
+                } else if (input.id === 'primaryDNS') {
+                    input.value = '78.157.42.100';
+                } else if (input.id === 'allowedIPs') {
+                    input.value = '0.0.0.0/0';
                 } else {
                     input.value = '';
                 }
             });
-            document.getElementById('keyOutput').querySelector('pre').textContent = 'کلیدهای تولید شده در اینجا نمایش داده می‌شوند...';
-            document.querySelector('#configOutput pre').textContent = '';
+            document.getElementById('keyOutput').textContent = 'Keys will appear here after generation...';
+            document.getElementById('configOutput').textContent = '';
             clientKeys = null;
             document.getElementById('configPreview').style.display = 'none';
-            const visualPreview = document.getElementById('visualPreview');
-            visualPreview.innerHTML = `
-                <div style="text-align: center;">
-                    <i class="fas fa-eye fa-3x" style="color: var(--primary-color); margin-bottom: 15px;"></i>
-                    <p>برای مشاهده پیش‌نمایش، ابتدا کلیدها را تولید کنید</p>
-                </div>
-            `;
-            showToast('فرم با موفقیت بازنشانی شد');
+            showToast('Form has been reset');
             generateKeysAuto();
         });
     </script>
+
 </body>
 
 </html>
